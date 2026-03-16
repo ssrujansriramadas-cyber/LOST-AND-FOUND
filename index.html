@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Lost & Found</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Login/Register Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <div id="loginForm">
+                <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+                <form id="loginFormSubmit">
+                    <input type="text" id="collegeIdLogin" placeholder="College ID" required>
+                    <input type="password" id="passwordLogin" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                </form>
+                <p>Don't have an account? <a href="#" id="showRegister">Register here</a></p>
+            </div>
+            <div id="registerForm" style="display: none;">
+                <h2><i class="fas fa-user-plus"></i> Register</h2>
+                <form id="registerFormSubmit">
+                    <input type="text" id="collegeId" placeholder="Enter 13-digit College ID" maxlength="13" required>
+                    <input type="text" id="name" placeholder="Full Name" required>
+                    <input type="email" id="email" placeholder="Email" required>
+                    <input type="tel" id="phone" placeholder="Contact Number" required>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <button type="submit">Register</button>
+                </form>
+                <p>Already have an account? <a href="#" id="showLogin">Login here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard" style="display: none;">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <i class="fas fa-search"></i>
+                <span>Lost & Found</span>
+            </div>
+            <div class="nav-user">
+                <span id="userName"></span>
+                <span id="adminBtn" class="admin-btn" style="display: none;">
+                    <i class="fas fa-crown"></i> Admin
+                </span>
+                <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+
+        </nav>
+
+        <div class="container">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-eye"></i>
+                    <h3 id="myReports">0</h3>
+                    <p>My Reports</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <h3 id="totalItems">0</h3>
+                    <p>Total Items</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-check-circle"></i>
+                    <h3 id="claimed">0</h3>
+                    <p>Claimed</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn-primary" onclick="showLostItemForm()">
+                    <i class="fas fa-plus"></i> Report Lost Item
+                </button>
+                <button class="btn-secondary" onclick="showFoundItemForm()">
+                    <i class="fas fa-search-plus"></i> Report Found Item
+                </button>
+            </div>
+
+            <!-- Lost Items -->
+            <section class="items-section">
+                <h2><i class="fas fa-exclamation-triangle"></i> Lost Items</h2>
+                <div class="search-bar">
+                    <input type="text" id="lostSearch" placeholder="Search lost items...">
+                    <select id="lostCategory">
+                        <option value="">All Categories</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="documents">Documents</option>
+                        <option value="keys">Keys</option>
+                        <option value="clothing">Clothing</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div id="lostItemsList" class="items-grid"></div>
+            </section>
+
+            <!-- Found Items -->
+            <section class="items-section">
+                <h2><i class="fas fa-check-circle"></i> Found Items</h2>
+                <div class="search-bar">
+                    <input type="text" id="foundSearch" placeholder="Search found items...">
+                    <select id="foundCategory">
+                        <option value="">All Categories</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="documents">Documents</option>
+                        <option value="keys">Keys</option>
+                        <option value="clothing">Clothing</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div id="foundItemsList" class="items-grid"></div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Claimed Items Section -->
+<section id="claimedItemsSection" class="items-section" style="display: none;">
+    <h2><i class="fas fa-trophy"></i> Claimed Items</h2>
+    <div class="search-bar">
+        <input type="text" id="claimedSearch" placeholder="Search claimed items...">
+        <select id="claimedCategory">
+            <option value="">All Categories</option>
+            <option value="electronics">Electronics</option>
+            <option value="documents">Documents</option>
+            <option value="keys">Keys</option>
+            <option value="clothing">Clothing</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
+    <div id="claimedItemsList" class="items-grid"></div>
+</section>
+
+
+    <!-- Lost Item Form Modal -->
+<div id="lostFormModal" class="modal">
+    <div class="modal-content form-modal">
+        <span class="close" onclick="closeLostForm()">&times;</span>
+        <h2>Report Lost Item</h2>
+        <form id="lostItemForm" enctype="multipart/form-data">
+            <input type="text" id="lostTitle" placeholder="Item Name (e.g., Black Backpack)" required>
+            <input type="file" id="lostImage" accept="image/*" capture="environment">
+            <div id="lostImagePreview" class="image-preview"></div>
+            <textarea id="lostDescription" placeholder="Description & Last Seen Location" required></textarea>
+            <input type="text" id="lostCategorySelect" placeholder="Category" list="categories" required>
+            <datalist id="categories">
+                <option value="Electronics">Electronics</option>
+                <option value="Documents">Documents</option>
+                <option value="Keys">Keys</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Books">Books</option>
+                <option value="Other">Other</option>
+            </datalist>
+            <input type="date" id="lostDate" required>
+            <button type="submit">Report Item</button>
+        </form>
+    </div>
+</div>
+
+
+    <!-- Found Item Form Modal -->
+<div id="foundFormModal" class="modal">
+    <div class="modal-content form-modal">
+        <span class="close" onclick="closeFoundForm()">&times;</span>
+        <h2>Report Found Item</h2>
+        <form id="foundItemForm" enctype="multipart/form-data">
+            <input type="text" id="foundTitle" placeholder="Item Name (e.g., Blue Notebook)" required>
+            <input type="file" id="foundImage" accept="image/*" capture="environment">
+            <div id="foundImagePreview" class="image-preview"></div>
+            <textarea id="foundDescription" placeholder="Description & Found Location" required></textarea>
+            <input type="text" id="foundCategorySelect" placeholder="Category" list="categories">
+            <datalist id="categories">
+                <option value="Electronics">Electronics</option>
+                <option value="Documents">Documents</option>
+                <option value="Keys">Keys</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Books">Books</option>
+                <option value="Other">Other</option>
+            </datalist>
+            <input type="date" id="foundDate" required>
+            <button type="submit">Report Item</button>
+        </form>
+    </div>
+</div>
+    
+<!-- Contact Modal -->
+<div id="contactModal" class="modal">
+    <div class="modal-content" style="max-width: 400px;">
+        <span class="close" onclick="closeContactModal()">&times;</span>
+        <h2>Contact Claimer</h2>
+        <div id="contactDetails"></div>
+        <button class="btn-primary" onclick="copyContactInfo()">Copy Details</button>
+    </div>
+</div>
+
+    <script src="script.js"></script>
+
+<!-- Contact Claimer Modal -->
+<div id="contactModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 450px;">
+        <span class="close" onclick="closeContactModal()">&times;</span>
+        <h2><i class="fas fa-phone"></i> Contact Claimer</h2>
+        <div id="contactDetails" style="text-align: center; padding: 20px;">
+            Loading...
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn-primary" onclick="copyContactInfo()" style="width: 100%; padding: 12px;">
+                📋 Copy Contact Details
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Admin Panel Modal -->
+<div id="adminModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 900px; max-height: 85vh; overflow-y: auto;">
+        <span class="close" onclick="closeAdminModal()">&times;</span>
+        <h2><i class="fas fa-users-cog"></i> Admin Panel - Users Management</h2>
+        
+        <div class="admin-section">
+            <h3>All Registered Users</h3>
+            <div class="table-container">
+                <table id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>College ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Lost Items</th>
+                            <th>Found Items</th>
+                            <th>Total Reports</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr><td colspan="7" style="text-align: center; padding: 40px;">No users registered yet</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+            <button class="btn-secondary" onclick="exportUsersCSV()">📊 Export Users CSV</button>
+            <button class="btn-danger" onclick="clearAllUsers()">⚠️ Clear All Users Data</button>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
